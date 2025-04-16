@@ -2,7 +2,8 @@ import json
 
 def handler(request):
     try:
-        query = request.get("queryStringParameters", {})
+        # Vercel utilise .query pour accéder aux paramètres d’URL
+        query = request.get("query", {})
         adresse = query.get("adresse", "").strip().lower()
 
         dpe_data = {

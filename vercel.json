@@ -1,9 +1,14 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "api/api_dpe.py", "use": "@vercel/python" }
-  ],
+  "functions": {
+    "api/*.py": {
+      "runtime": "python3.9"
+    }
+  },
   "routes": [
-    { "src": "/api/dpe", "dest": "api/api_dpe.py" }
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/\\1.py"
+    }
   ]
 }

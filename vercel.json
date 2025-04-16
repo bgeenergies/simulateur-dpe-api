@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/api_dpe.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/api/dpe", "dest": "api/api_dpe.py" }
+  ]
+}

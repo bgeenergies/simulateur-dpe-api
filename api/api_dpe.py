@@ -1,15 +1,17 @@
+from http.server import BaseHTTPRequestHandler
 import json
+from urllib.parse import parse_qs
 
-def handler(request):
+def handler(request: BaseHTTPRequestHandler):
     try:
-        print("Requête reçue :", request)
+        # Récupère la chaîne de requête (ex: ?adresse=...)
+        query_string = request.path.split('?')[-1]
+        query_params = parse_qs(query_string)
 
-        query = request.get("queryStringParameters", {})
-        print("Query params:", query)
+        adresse = query_params.get("adresse", [""])[0].strip().lower()
+        print("Adresse reçue :", adresse)
 
-        adresse = query.get("adresse", "").strip().lower()
-        print("Adresse:", adresse)
-
+        # Dictionnaire simulé de DPE
         dpe_data = {
             "12 rue victor hugo, 75000 paris": {
                 "etiquette_energie": "D",
@@ -40,11 +42,14 @@ def handler(request):
             return {
                 "statusCode": 404,
                 "headers": {"Content-Type": "application/json"},
-                "body": json.dumps({"status": "non_trouvé", "message": "Aucun DPE connu pour cette adresse."})
+                "body": json.dumps({
+                    "status": "non_trouvé",
+                    "message": "Aucun DPE connu pour cette adresse."
+                })
             }
 
     except Exception as e:
-        print("Erreur:", str(e))
+        print("Erreur serveur :", str(e))
         return {
             "statusCode": 500,
             "headers": {"Content-Type": "application/json"},

@@ -1,8 +1,5 @@
-from flask import Flask, request, jsonify
+import json
 
-app = Flask(__name__)
-
-# Base DPE simulée avec chauffage
 dpe_data = {
     "12 rue victor hugo, 75000 paris": {
         "etiquette_energie": "D",
@@ -21,11 +18,20 @@ dpe_data = {
     }
 }
 
-@app.route("/api/dpe", methods=["GET"])
-def get_dpe():
-    adresse = request.args.get("adresse", "").strip().lower()
+def handler(request):
+    query = request.get("queryStringParameters") or {}
+    adresse = (query.get("adresse") or "").strip().lower()
     result = dpe_data.get(adresse)
+
     if result:
-        return jsonify({"status": "trouvé", "dpe": result})
+        return {
+            "statusCode": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"status": "trouvé", "dpe": result})
+        }
     else:
-        return jsonify({"status": "non_trouvé", "message": "Aucun DPE connu pour cette adresse."}), 404
+        return {
+            "statusCode": 404,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"status": "non_trouvé", "message": "Aucun DPE connu pour cette adresse."})
+        }
